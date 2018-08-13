@@ -52,6 +52,9 @@ module Aws
       # @api private
       def []=(bucket_name, region_name)
         @mutex.synchronize do
+	  # Workaround for JRuby https://github.com/jruby/jruby/issues/5203, which will be patched in JRuby 9.1.18.0
+          # Resolves Helltool https://github.com/looker/helltool/issues/38743
+          region_name = region_name.split('').join('')
           @regions[bucket_name] = region_name
           @listeners.each { |block| block.call(bucket_name, region_name) }
         end
